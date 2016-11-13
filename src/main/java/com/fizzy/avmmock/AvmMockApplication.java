@@ -1,6 +1,7 @@
 package com.fizzy.avmmock;
 
 import com.fizzy.avmmock.config.AvmMockConfig;
+import com.fizzy.avmmock.config.AvmMockWebConfig;
 import com.fizzy.avmmock.config.SecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @EnableAutoConfiguration
-@Import({SecurityConfiguration.class, AvmMockConfig.class})
+@Import({SecurityConfiguration.class, AvmMockConfig.class, AvmMockWebConfig.class})
 @EnableZuulProxy
 public class AvmMockApplication {
 

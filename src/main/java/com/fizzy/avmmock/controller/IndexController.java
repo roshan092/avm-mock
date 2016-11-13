@@ -21,8 +21,8 @@ public class IndexController {
         return Collections.singletonMap("token", session.getId());
     }
 
-    @RequestMapping("/")
-    public String index() {
+    @RequestMapping("/status")
+     public String status() {
         return "Greetings from Spring Boot!";
     }
 

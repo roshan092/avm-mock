@@ -1,8 +1,42 @@
-<h1>Greeting</h1>
 <div ng-show="authenticated">
     <p>The ID is {{controller.greeting.id}}</p>
+
     <p>The content is {{controller.greeting.content}}</p>
 </div>
-<div  ng-show="!authenticated">
-    <p>Login to see your greeting</p>
+<div ng-show="!authenticated">
+    <div class="smart-table-container">
+        <table st-table="displayedCollection" st-safe-src="controller.rowCollection" class="table table-striped">
+            <thead>
+            <tr>
+                <th st-sort="address">Address</th>
+                <th st-sort="precisionScore">Precision Score</th>
+                <th st-sort="confidenceScore">Confidence Score</th>
+                <th st-sort="fsd">FSD</th>
+                <th st-sort="marketValue">Market value</th>
+            </tr>
+            <tr>
+                <th colspan="5">
+                    <input st-search="'address'" placeholder="Search for address" class="input-sm form-control"
+                           type="search"/>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in displayedCollection">
+                <td>{{row.address | uppercase}}</td>
+                <td>{{row.precisionScore}}</td>
+                <td>{{row.confidenceScore}}</td>
+                <td>{{row.fsd}}</td>
+                <td>{{row.marketValue | currency}}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="controller.itemsByPage" st-displayed-pages="7"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>

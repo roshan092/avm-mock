@@ -1,4 +1,4 @@
-angular.module('avm-mock', ['ngRoute'])
+angular.module('avm-mock', ['ngRoute', 'smart-table'])
     .config(function ($routeProvider, $httpProvider) {
         $routeProvider.when('/', {
             templateUrl: 'home.html',
@@ -16,26 +16,52 @@ angular.module('avm-mock', ['ngRoute'])
 
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
     })
-    .controller('home', function ($http) {
+    .controller('home', ['$rootScope', '$http', function ($rootScope, $http) {
+        console.log("Inside controller function");
         var self = this;
-        /* $http.get('http://localhost:9000/resource/').then(function (response) {
-         self.greeting = response.data;
-         });*/
-        $http.get('token').then(function (response) {
-            $http({
-                url: 'resource/',
-                method: 'GET',
-                headers: {
-                    'X-Auth-Token': response.data.token
-                }
-            }).then(function (response) {
-                self.greeting = response.data;
+        if ($rootScope.authenticated) {
+            $http.get('token').then(function (response) {
+                $http({
+                    url: 'resource/',
+                    method: 'GET',
+                    headers: {
+                        'X-Auth-Token': response.data.token
+                    }
+                }).then(function (response) {
+                    self.greeting = response.data;
+                });
             });
-        })
-    })
+        }
+        var addresses = ['67 Evaline Street Campsie 2194', '226 Tower Street Panania 2213',
+            '2 Market Street Sydney 2000'];
+        self.itemsByPage = 10;
+
+        function createRandomItem() {
+            var address = addresses[Math.floor(Math.random() * 3)];
+            var precisionScore = Math.floor(Math.random() * 100);
+            var confidenceScore = Math.floor(Math.random() * 100);
+            var fsd = Math.floor(Math.random() * 100);
+            var marketValue = Math.floor(Math.random() * 1000000);
+
+            return {
+                address: address,
+                precisionScore: precisionScore,
+                confidenceScore: confidenceScore,
+                fsd: fsd,
+                marketValue: marketValue
+            }
+        }
+
+        self.rowCollection = [];
+        for (var j = 0; j < 200; j++) {
+            self.rowCollection.push(createRandomItem());
+        }
+    }])
     .controller('navigation', function ($rootScope, $http, $location) {
         var self = this;
+        $rootScope.authenticated = false;
         var authenticate = function (credentials, callback) {
+            console.log("Inside authenticate");
             var headers = credentials ? {
                 authorization: "Basic "
                 + btoa(credentials.username + ":" + credentials.password)
@@ -48,13 +74,14 @@ angular.module('avm-mock', ['ngRoute'])
                     $rootScope.authenticated = false;
                 }
                 callback && callback();
-            }, function () {
+            }, function (error) {
+                console.log("error getting user")
                 $rootScope.authenticated = false;
                 callback && callback();
             });
         }
 
-        authenticate();
+        //authenticate();
         self.credentials = {};
         self.login = function () {
             authenticate(self.credentials, function () {
