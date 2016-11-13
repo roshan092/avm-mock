@@ -1,9 +1,12 @@
 package com.fizzy.avmmock.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +14,12 @@ import java.util.UUID;
 
 @RestController
 public class IndexController {
+
+    @RequestMapping("/token")
+    @ResponseBody
+    public Map<String,String> token(HttpSession session) {
+        return Collections.singletonMap("token", session.getId());
+    }
 
     @RequestMapping("/")
     public String index() {

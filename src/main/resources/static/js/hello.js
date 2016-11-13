@@ -18,9 +18,20 @@ angular.module('avm-mock', ['ngRoute'])
     })
     .controller('home', function ($http) {
         var self = this;
-        $http.get('/resource/').then(function (response) {
-            self.greeting = response.data;
-        });
+        /* $http.get('http://localhost:9000/resource/').then(function (response) {
+         self.greeting = response.data;
+         });*/
+        $http.get('token').then(function (response) {
+            $http({
+                url: 'resource/',
+                method: 'GET',
+                headers: {
+                    'X-Auth-Token': response.data.token
+                }
+            }).then(function (response) {
+                self.greeting = response.data;
+            });
+        })
     })
     .controller('navigation', function ($rootScope, $http, $location) {
         var self = this;
@@ -45,8 +56,8 @@ angular.module('avm-mock', ['ngRoute'])
 
         authenticate();
         self.credentials = {};
-        self.login = function() {
-            authenticate(self.credentials, function() {
+        self.login = function () {
+            authenticate(self.credentials, function () {
                 if ($rootScope.authenticated) {
                     $location.path("/");
                     self.error = false;
@@ -57,8 +68,8 @@ angular.module('avm-mock', ['ngRoute'])
             });
         };
 
-        self.logout = function() {
-            $http.post('logout', {}).finally(function() {
+        self.logout = function () {
+            $http.post('logout', {}).finally(function () {
                 $rootScope.authenticated = false;
                 $location.path("/");
             });
